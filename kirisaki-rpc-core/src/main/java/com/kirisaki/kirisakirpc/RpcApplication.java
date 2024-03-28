@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RpcApplication {
+    private RpcApplication(){
+
+    }
     /**
      * 全局配置对象
      */
