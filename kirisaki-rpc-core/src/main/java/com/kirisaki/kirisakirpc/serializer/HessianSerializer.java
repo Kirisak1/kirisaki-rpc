@@ -1,4 +1,4 @@
-package com.kirisaki.kirisakirpc.serialization;
+package com.kirisaki.kirisakirpc.serializer;
 
 import com.caucho.hessian.io.HessianInput;
 import com.caucho.hessian.io.HessianOutput;

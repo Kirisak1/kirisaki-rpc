@@ -1,4 +1,4 @@
-package com.kirisaki.kirisakirpc.serialization;
+package com.kirisaki.kirisakirpc.serializer;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,5 +1,6 @@
 package com.kirisaki.kirisakirpc.config;
 
+import com.kirisaki.kirisakirpc.serializer.SerializerKeys;
 import lombok.Data;
 
 /**
@@ -25,4 +26,8 @@ public class RpcConfig {
      * 是否开启 mock 数据
      */
     private boolean mock = false;
+    /**
+     * 序列化器
+     */
+    private String serializer = SerializerKeys.JDK;
 }

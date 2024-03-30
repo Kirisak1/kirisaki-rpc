@@ -1,10 +1,11 @@
 package com.kirisaki.kirisakirpc.server;
 
+import com.kirisaki.kirisakirpc.RpcApplication;
 import com.kirisaki.kirisakirpc.model.RpcRequest;
 import com.kirisaki.kirisakirpc.model.RpcResponse;
 import com.kirisaki.kirisakirpc.registry.LocalRegistry;
-import com.kirisaki.kirisakirpc.serialization.JdkSerializer;
-import com.kirisaki.kirisakirpc.serialization.Serializer;
+import com.kirisaki.kirisakirpc.serializer.Serializer;
+import com.kirisaki.kirisakirpc.serializer.SerializerFactory;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
@@ -17,7 +18,8 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
     @Override
     public void handle(HttpServerRequest request) {
         //指定序列化器
-        final Serializer serializer = new JdkSerializer();
+        // final Serializer serializer = new JdkSerializer();
+        Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
         //记录日志
         System.out.println("Received request" + request.method() + "" + request.uri());
 

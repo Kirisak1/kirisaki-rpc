@@ -1,4 +1,4 @@
-package com.kirisaki.kirisakirpc.serialization;
+package com.kirisaki.kirisakirpc.serializer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
