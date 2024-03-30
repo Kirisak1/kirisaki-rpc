@@ -1,5 +1,7 @@
 package com.kirisaki.kirisakirpc.proxy;
 
+import com.kirisaki.kirisakirpc.RpcApplication;
+
 import java.lang.reflect.Proxy;
 
 /**
@@ -11,6 +13,17 @@ public class ServiceProxyFactory {
     }
 
     public static <T> T getProxy(Class<T> serverClass) {
-        return (T) Proxy.newProxyInstance(serverClass.getClassLoader(), new Class[]{serverClass}, new ServiceProxy());
+
+        if (RpcApplication.getRpcConfig().isMock()) {
+            return getMockProxy(serverClass);
+        }
+
+        return (T) Proxy.newProxyInstance(
+                serverClass.getClassLoader(),
+                new Class[]{serverClass},
+                new ServiceProxy());
+    }
+    public static <T> T getMockProxy(Class<T> serverClass) {
+        return (T) Proxy.newProxyInstance(serverClass.getClassLoader(), new Class[]{serverClass}, new MockServiceProxy());
     }
 }
