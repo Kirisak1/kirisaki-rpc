@@ -1,0 +1,2 @@
+jdk=com.kirisaki.kirisakirpc.serializer.JdkSerializer
+hessian=com.kirisaki.kirisakirpc.serializer.HessianSerializer

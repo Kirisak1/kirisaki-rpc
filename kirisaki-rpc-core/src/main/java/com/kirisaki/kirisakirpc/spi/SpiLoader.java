@@ -73,7 +73,7 @@ public class SpiLoader {
         //从实例缓存中加载指定类型的实例
         //todo 通过 containsKey 来判断是否含有实例
         String implClassName = implClass.getName();
-        if (!instanceCache.containsKey(implClassName)) {
+        if (!instanceCache.containsKey(key)) {
             try {
                 instanceCache.put(key, implClass.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
@@ -81,7 +81,7 @@ public class SpiLoader {
                 throw new RuntimeException(errorMsg, e);
             }
         }
-        return (T) instanceCache.get(implClassName);
+        return (T) instanceCache.get(key);
     }
 
     /**

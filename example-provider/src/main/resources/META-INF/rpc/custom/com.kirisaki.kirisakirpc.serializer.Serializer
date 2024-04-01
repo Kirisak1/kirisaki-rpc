@@ -1,0 +1,2 @@
+json=com.kirisaki.kirisakirpc.serializer.JsonSerializer
+kryo=com.kirisaki.kirisakirpc.serializer.KryoSerializer

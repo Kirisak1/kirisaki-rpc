@@ -14,8 +14,9 @@ public class HessianSerializer implements Serializer {
     @Override
     public <T> byte[] serialize(T object) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        HessianOutput ho = new HessianOutput(bos);
-        ho.writeObject(bos);
+        HessianOutput out = new HessianOutput(bos);
+        out.writeObject(object);
+        out.flush();
         return bos.toByteArray();
     }
 
