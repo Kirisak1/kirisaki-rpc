@@ -28,7 +28,6 @@ public class SpiLoader {
     /**
      * 系统 SPI 目录
      */
-    //todo 目录要用/ 不能用.
     private static final String RPC_SYSTEM_SPI_DIR = "META-INF/rpc/system/";
     /**
      * 用户自定义 SPI 目录
@@ -61,7 +60,6 @@ public class SpiLoader {
     public static <T> T gerInstance(Class<T> tClass, String key) {
         String tClassName = tClass.getName();
         Map<String, Class<?>> keyClassMap = loaderMap.get(tClassName);
-        //todo 思考是懒加载还是饿汉式加载
         if (keyClassMap == null) {
             throw new RuntimeException(String.format("SpiLoader 未加载 %s 类型", tClassName));
         }
@@ -71,7 +69,6 @@ public class SpiLoader {
         //获取到要加载的实现类型
         Class<?> implClass = keyClassMap.get(key);
         //从实例缓存中加载指定类型的实例
-        //todo 通过 containsKey 来判断是否含有实例
         String implClassName = implClass.getName();
         if (!instanceCache.containsKey(implClassName)) {
             try {
@@ -94,7 +91,6 @@ public class SpiLoader {
         //扫描路径,用户自定义的 SPI 优先级高于系统 SPI
         Map<String, Class<?>> keyClassMap = new HashMap<>();
         for (String scanDir : SCAN_DIRS) {
-            //todo 忘记把包名加上了
             List<URL> resources = ResourceUtil.getResources(scanDir + loadClass.getName());
             try {
                 //读取每个资源文件
@@ -102,7 +98,6 @@ public class SpiLoader {
                     InputStreamReader inputStreamReader = new InputStreamReader(resource.openStream());
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                     String line;
-                    //todo 通过 read 来读取文件
                     while ((line = bufferedReader.readLine()) != null) {
                         String[] strArray = line.split("=");
                         if (strArray.length > 1) {

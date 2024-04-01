@@ -19,7 +19,6 @@ public class ServiceProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // Serializer serializer = new JdkSerializer();
-        //todo 如何在反射中传入参数  需要定义成 final 防止修改
        final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
 
         RpcRequest rpcRequest = RpcRequest.builder()

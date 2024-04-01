@@ -6,7 +6,6 @@ import com.kirisaki.kirisakirpc.spi.SpiLoader;
  * 序列化工厂
  */
 public class SerializerFactory {
-    //todo 跟类一起加载并且执行初始化
 
     // private static final Map<String, Serializer> KEY_SERIALIZER_MAP = new HashMap<>() {{
     //     put(SerializerKeys.JDK, new JdkSerializer());
@@ -25,7 +24,6 @@ public class SerializerFactory {
     //  * @return
     //  */
     // public static Serializer getInstance(String key) {
-    //     //todo getOrDefault 可以省去判 null 逻辑
     //     return KEY_SERIALIZER_MAP.getOrDefault(key, DEFAULT_SERIALIZER);
     // }
 

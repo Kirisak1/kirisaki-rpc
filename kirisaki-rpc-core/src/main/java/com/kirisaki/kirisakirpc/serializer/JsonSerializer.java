@@ -11,7 +11,6 @@ import java.io.IOException;
  * Json 序列化器
  */
 public class JsonSerializer implements Serializer {
-    //todo 需要自己多引入一个依赖? 不明白为什么文档里不需要引入依赖
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override

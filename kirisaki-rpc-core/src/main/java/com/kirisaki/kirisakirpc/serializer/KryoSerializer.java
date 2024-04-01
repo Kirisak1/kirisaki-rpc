@@ -9,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class KryoSerializer implements Serializer {
-    //todo lanmda 表达式要用 -> 而不是 =>
     private static final ThreadLocal<Kryo> KRYO_THREAD_LOCAL = ThreadLocal.withInitial(() -> {
         Kryo kryo = new Kryo();
         //设置动态序列化和反序列化类,不提前注册所有类(可能有安全问题)
