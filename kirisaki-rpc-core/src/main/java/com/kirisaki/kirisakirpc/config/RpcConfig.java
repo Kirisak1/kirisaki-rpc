@@ -21,7 +21,7 @@ public class RpcConfig {
     /**
      * 服务端口
      */
-    private Integer serverPort = 8080;
+    private Integer serverPort = 8082;
     /**
      * 是否开启 mock 数据
      */
@@ -30,4 +30,8 @@ public class RpcConfig {
      * 序列化器
      */
     private String serializer = SerializerKeys.JDK;
+    /**
+     * 注册中心配置
+     */
+    private RegistryConfig registryConfig = new RegistryConfig();
 }

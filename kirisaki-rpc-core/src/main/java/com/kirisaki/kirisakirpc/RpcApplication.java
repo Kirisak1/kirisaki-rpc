@@ -1,7 +1,10 @@
 package com.kirisaki.kirisakirpc;
 
+import com.kirisaki.kirisakirpc.config.RegistryConfig;
 import com.kirisaki.kirisakirpc.config.RpcConfig;
 import com.kirisaki.kirisakirpc.constant.RpcConstant;
+import com.kirisaki.kirisakirpc.registry.Registry;
+import com.kirisaki.kirisakirpc.registry.RegistryFactory;
 import com.kirisaki.kirisakirpc.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,9 +13,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RpcApplication {
-    private RpcApplication(){
+    private RpcApplication() {
 
     }
+
     /**
      * 全局配置对象
      */
@@ -26,17 +30,21 @@ public class RpcApplication {
     public static void init(RpcConfig newRpcConfig) {
         rpcConfig = newRpcConfig;
         log.info("rpc init,config = {}", newRpcConfig.toString());
+        //注册到注册中心
+        RegistryConfig registryConfig = newRpcConfig.getRegistryConfig();
+        Registry registry = RegistryFactory.getInstance(registryConfig.getRegistry());
+        registry.init(registryConfig);
+        log.info("registry init,config={}", registryConfig);
     }
 
     /**
      * 初始化
-
      */
     public static void init() {
-        RpcConfig  newRpcConfig;
+        RpcConfig newRpcConfig;
         try {
             newRpcConfig = ConfigUtils.loadConfig(RpcConfig.class, RpcConstant.DEFAULT_CONFIG_PREFIX);
-        }catch (Exception e){
+        } catch (Exception e) {
             //配置加载失败,使用默认值
             newRpcConfig = new RpcConfig();
         }
@@ -45,6 +53,7 @@ public class RpcApplication {
 
     /**
      * 获取配置
+     *
      * @return
      */
     public static RpcConfig getRpcConfig() {

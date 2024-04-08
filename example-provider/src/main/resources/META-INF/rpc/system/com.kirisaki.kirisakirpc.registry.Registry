@@ -1,0 +1,1 @@
+etcd=com.kirisaki.kirisakirpc.registry.EtcdRegistry
