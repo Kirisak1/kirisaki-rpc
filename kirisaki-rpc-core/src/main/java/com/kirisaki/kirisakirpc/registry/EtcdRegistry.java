@@ -142,11 +142,14 @@ public class EtcdRegistry implements Registry {
 
     @Override
     public void destroy() {
-        //todo 注销时会报错  查看一下如何解决
-        for (ServiceMetaInfo serviceMetaInfo : consumeRegistry.registryCache) {
-            kvClient.delete(ByteSequence.from(ETCD_ROOT_PATH + serviceMetaInfo.getServiceNodeKey(), StandardCharsets.UTF_8));
-        }
         System.out.println("当前节点下线");
+        for (String key : localRegisterNodeKeySet) {
+            try {
+                kvClient.delete(ByteSequence.from(key, StandardCharsets.UTF_8)).get();
+            } catch (Exception e) {
+                throw new RuntimeException(key + "节点下线失败");
+            }
+        }
         if (kvClient != null) {
             kvClient.close();
         }
