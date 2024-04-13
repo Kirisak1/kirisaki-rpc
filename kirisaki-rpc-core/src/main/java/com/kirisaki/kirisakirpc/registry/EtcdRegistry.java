@@ -10,6 +10,7 @@ import io.etcd.jetcd.*;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
 import io.etcd.jetcd.watch.WatchEvent;
+import io.vertx.core.impl.ConcurrentHashSet;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -27,9 +28,13 @@ public class EtcdRegistry implements Registry {
      */
     private final Set<String> localRegisterNodeKeySet = new HashSet<>();
     /**
-     * 服务缓存(消费端)
+     * 注册中心服务缓存
      */
-    private final ConsumeRegistry consumeRegistry = new ConsumeRegistry();
+    private final RegistryServiceCache registryServiceCache = new RegistryServiceCache();
+    /**
+     * 正在监听的 key 集合
+     */
+    private final Set<String> watchingKeySet = new ConcurrentHashSet<>();
     /**
      * 客户端对象
      */
@@ -82,22 +87,21 @@ public class EtcdRegistry implements Registry {
         localRegisterNodeKeySet.remove(registerKey);
 
         //todo  本地缓存也需要删除 这里不确定是否需要注销
-        consumeRegistry.destroy();
+        registryServiceCache.clearCache();
     }
 
     @Override
     public List<ServiceMetaInfo> serviceDiscovery(String serviceKey) {
-
-
-        //如果有本地缓存优先读取本地缓存
-        if (consumeRegistry.registryCache != null) {
-            return consumeRegistry.registryCache;
+        //优先从缓存获取服务
+        List<ServiceMetaInfo> cachedServiceMetaInfoList = registryServiceCache.readCache();
+        if (cachedServiceMetaInfoList != null) {
+            return cachedServiceMetaInfoList;
         }
 
         //前缀搜索,结尾一定要加'/'
         String searchPrefix = ETCD_ROOT_PATH + serviceKey + "/";
         try {
-            //支持前缀搜索
+            //前缀搜索
             GetOption getOption = GetOption.builder().isPrefix(true).build();
             List<KeyValue> keyValues = kvClient.get(
                             ByteSequence.from(searchPrefix,
@@ -105,39 +109,22 @@ public class EtcdRegistry implements Registry {
                             getOption)
                     .get()
                     .getKvs();
-            List<ServiceMetaInfo> queryResult = keyValues.stream()
+            //解析服务信息
+            List<ServiceMetaInfo> serviceMetaInfoList = keyValues.stream()
                     .map(keyValue -> {
+                        String key = keyValue.getKey().toString(StandardCharsets.UTF_8);
+                        //监听 key 的变化
+                        watch(key);
                         String value =
                                 keyValue.getValue().toString(StandardCharsets.UTF_8);
                         return JSONUtil.toBean(value, ServiceMetaInfo.class);
                     }).collect(Collectors.toList());
-
-            //服务监控
-            Watch watchClient = client.getWatchClient();
-            for (ServiceMetaInfo serviceMetaInfo : queryResult) {
-                String serviceNodeKey = serviceMetaInfo.getServiceNodeKey();
-                watchClient.watch(ByteSequence.from(serviceNodeKey, StandardCharsets.UTF_8), (response) -> {
-                    for (WatchEvent event : response.getEvents()) {
-                        switch (event.getEventType()) {
-                            case DELETE:
-                            case PUT:
-                                consumeRegistry.registryCache = null;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                });
-            }
-
             //写入缓存
-            consumeRegistry.write(queryResult);
-
-            return queryResult;
+            registryServiceCache.writeCache(serviceMetaInfoList);
+            return serviceMetaInfoList;
         } catch (Exception e) {
             throw new RuntimeException("获取列表失败", e);
         }
-
     }
 
     @Override
@@ -184,5 +171,30 @@ public class EtcdRegistry implements Registry {
         // 支持秒级别定时任务
         CronUtil.setMatchSecond(true);
         CronUtil.start();
+    }
+
+    /**
+     * 监听(消费端)
+     * @param serviceNodeKey
+     */
+    @Override
+    public void watch(String serviceNodeKey) {
+        Watch watchClient = client.getWatchClient();
+        boolean newWatch = watchingKeySet.add(serviceNodeKey);
+        if (newWatch){
+            watchClient.watch(ByteSequence.from(serviceNodeKey, StandardCharsets.UTF_8), (response) -> {
+                for (WatchEvent event : response.getEvents()) {
+                    switch (event.getEventType()) {
+                        //key 删除时触发
+                        case DELETE:
+                            registryServiceCache.clearCache();
+                            break;
+                        case PUT:
+                        default:
+                            break;
+                    }
+                }
+            });
+        }
     }
 }
