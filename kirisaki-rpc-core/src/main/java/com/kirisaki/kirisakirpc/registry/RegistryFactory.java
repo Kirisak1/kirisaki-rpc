@@ -16,7 +16,6 @@ public class RegistryFactory {
     /**
      * 默认的注册中心
      */
-    //todo 这个有什么用...
     private static final Registry DEFAULT_REGISTRY = new EtcdRegistry();
 
     /**

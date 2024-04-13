@@ -27,7 +27,6 @@ public class RpcRequest implements Serializable {
     /**
      * 服务版本号
      */
-    //todo 看一下这个字段是用来做什么的.. 检查拉取下的服务版本号是否正确?
     private String serviceVersion = RpcConstant.DEFAULT_SERVICE_VERSION;
     /**
      * 参数类型列表

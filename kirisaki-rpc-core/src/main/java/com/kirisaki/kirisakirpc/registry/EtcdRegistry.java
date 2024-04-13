@@ -85,9 +85,6 @@ public class EtcdRegistry implements Registry {
 
         //服务注册表删除服务注册的信息
         localRegisterNodeKeySet.remove(registerKey);
-
-        //todo  本地缓存也需要删除 这里不确定是否需要注销
-        registryServiceCache.clearCache();
     }
 
     @Override
