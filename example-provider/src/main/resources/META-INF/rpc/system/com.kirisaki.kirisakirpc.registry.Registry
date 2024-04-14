@@ -1,1 +1,2 @@
 etcd=com.kirisaki.kirisakirpc.registry.EtcdRegistry
+zookeeper=com.kirisaki.kirisakirpc.registry.ZookeeperRegistry
