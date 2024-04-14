@@ -153,6 +153,9 @@ public class ZookeeperRegistry implements Registry {
                     CuratorCacheListener
                             .builder()
                             .forDeletes(childData -> registryServiceCache.clearCache())
+                            .forChanges((oldNode,newNode)->{
+                                registryServiceCache.clearCache();
+                            })
                             .build()
             );
         }
