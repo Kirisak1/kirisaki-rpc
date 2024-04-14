@@ -163,9 +163,12 @@ public class ZookeeperRegistry implements Registry {
         try {
             return ServiceInstance
                     .<ServiceMetaInfo>builder()
+                    //key
                     .id(serviceAddress)
+                    //父目录名称
                     .name(serviceMetaInfo.getServiceKey())
                     .address(serviceMetaInfo.getServiceAddress())
+                    //value
                     .payload(serviceMetaInfo)
                     .build();
         } catch (Exception e) {
